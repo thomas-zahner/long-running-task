@@ -7,6 +7,7 @@ pub trait Progressible {
 }
 
 #[derive(PartialEq, Eq, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 pub enum TaskState<T, P>
 where
     P: Progressible,
@@ -170,7 +171,7 @@ mod tests {
 
         let (handle, id) = pool.insert(EmptyProgress {});
         pool.complete(handle, ());
-        assert_eq!(pool.retrieve(&id), Some(TaskState::Done(())));
+        assert_eq!(pool.retrieve(&id), Some(TaskState::Done(()))); // retrievable when not exceeded
 
         let (handle, id) = pool.insert(EmptyProgress {});
         pool.complete(handle, ());
@@ -179,9 +180,8 @@ mod tests {
 
         assert_eq!(get_inner_size(&pool), 1);
 
-        // trigger purge by completing new task
         let h = pool.insert(EmptyProgress {}).0;
-        pool.complete(h, ()); // trigger purge
+        pool.complete(h, ()); // trigger purge by completing new task
 
         assert_eq!(pool.retrieve(&id), None);
         assert_eq!(get_inner_size(&pool), 1);
