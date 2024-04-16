@@ -9,4 +9,5 @@ edition = "2021"
 uuid = { version = "1.8.0", features = ["v4"] }
 
 [features]
+default = ["lifespan"]
 lifespan = []
