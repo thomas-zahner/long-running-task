@@ -1,5 +1,5 @@
 [package]
-name = "long_running_task"
+name = "long-running-task"
 version = "0.1.0"
 edition = "2021"
 
