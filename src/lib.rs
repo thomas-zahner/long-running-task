@@ -22,7 +22,7 @@ where
 {
     pending: HashMap<Uuid, P>,
     completed: HashMap<Uuid, (Instant, T)>,
-    max_lifespan: Option<Duration>,
+    lifespan: Option<Duration>,
 }
 
 impl<T, P> Default for TaskPool<T, P>
@@ -33,7 +33,7 @@ where
         Self {
             pending: HashMap::new(),
             completed: HashMap::new(),
-            max_lifespan: None,
+            lifespan: None,
         }
     }
 }
@@ -49,12 +49,12 @@ impl<T, P> TaskPool<T, P>
 where
     P: Progressible + Clone,
 {
-    /// Configure the maximum lifespan of tasks.
+    /// Configure the lifespan of tasks.
     /// `None` means that tasks will never expire.
     /// Expired tasks are purged as soon as `complete` is invoked.
     #[cfg(feature = "lifespan")]
-    pub fn with_max_lifespan(mut self, max_lifespan: Option<Duration>) -> Self {
-        self.max_lifespan = max_lifespan;
+    pub fn with_lifespan(mut self, lifespan: Option<Duration>) -> Self {
+        self.lifespan = lifespan;
         self
     }
 
@@ -92,10 +92,10 @@ where
     }
 
     fn purge_expired_tasks(&mut self) {
-        if let Some(max_lifespan) = self.max_lifespan {
+        if let Some(lifespan) = self.lifespan {
             let now = Instant::now();
             self.completed
-                .retain(|_, (inserted_at, _)| now.duration_since(*inserted_at) < max_lifespan);
+                .retain(|_, (inserted_at, _)| now.duration_since(*inserted_at) < lifespan);
         }
     }
 }
@@ -167,7 +167,7 @@ mod tests {
     #[cfg(feature = "lifespan")]
     fn lifespan() {
         let lifespan = Duration::from_millis(10);
-        let mut pool = TaskPool::<(), EmptyProgress>::default().with_max_lifespan(Some(lifespan));
+        let mut pool = TaskPool::<(), EmptyProgress>::default().with_lifespan(Some(lifespan));
 
         let (handle, id) = pool.insert(EmptyProgress {});
         pool.complete(handle, ());
