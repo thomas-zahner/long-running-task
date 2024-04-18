@@ -1,5 +1,7 @@
-use std::time::Instant;
-use std::{collections::HashMap, time::Duration};
+use std::{
+    collections::HashMap,
+    time::{Duration, Instant},
+};
 use uuid::Uuid;
 
 pub trait Progressible {
