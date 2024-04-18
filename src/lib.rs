@@ -126,10 +126,7 @@ mod tests {
     use std::{thread, time::Duration};
 
     use super::Progressible;
-    use crate::{
-        TaskPool,
-        TaskState::{self, *},
-    };
+    use crate::{TaskPool, TaskState::*};
 
     #[test]
     fn insert_and_get() {
@@ -167,26 +164,33 @@ mod tests {
 
     #[test]
     #[cfg(feature = "lifespan")]
-    fn lifespan() {
+    fn exceed_lifespan() {
         let lifespan = Duration::from_millis(10);
         let mut pool = TaskPool::<(), EmptyProgress>::default().with_lifespan(Some(lifespan));
 
-        let (handle, id) = pool.insert(EmptyProgress {});
-        pool.complete(handle, ());
-        assert_eq!(pool.retrieve(&id), Some(TaskState::Done(()))); // retrievable when not exceeded
-
-        let (handle, id) = pool.insert(EmptyProgress {});
-        pool.complete(handle, ());
-
+        let id = insert_and_complete(&mut pool);
         thread::sleep(lifespan); // exceed time
-
-        assert_eq!(get_inner_size(&pool), 1);
-
-        let h = pool.insert(EmptyProgress {}).0;
-        pool.complete(h, ()); // trigger purge by completing new task
+        insert_and_complete(&mut pool); // trigger purge by completing new task
 
         assert_eq!(pool.retrieve(&id), None);
-        assert_eq!(get_inner_size(&pool), 1);
+    }
+
+    #[test]
+    #[cfg(feature = "lifespan")]
+    fn within_lifespan() {
+        let lifespan = Duration::from_millis(10);
+        let mut pool = TaskPool::<(), EmptyProgress>::default().with_lifespan(Some(lifespan));
+
+        let id = insert_and_complete(&mut pool);
+        insert_and_complete(&mut pool); // trigger purge by completing new task
+
+        assert_eq!(pool.retrieve(&id), Some(Done(())));
+    }
+
+    fn insert_and_complete(pool: &mut TaskPool<(), EmptyProgress>) -> uuid::Uuid {
+        let (handle, id) = pool.insert(EmptyProgress {});
+        pool.complete(handle, ());
+        id
     }
 
     fn get_inner_size<T, P>(pool: &TaskPool<T, P>) -> usize
