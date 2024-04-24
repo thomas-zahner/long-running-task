@@ -68,7 +68,6 @@ where
     /// Expired tasks are purged as soon as `complete` is invoked.
     /// Specifying a lifespan is useful because clients might not always retrieve completed tasks.
     /// Without configuring a lifespan, such abandoned tasks accumulate over time and fill up memory.
-    #[cfg(feature = "lifespan")]
     #[must_use]
     pub fn with_lifespan(mut self, lifespan: Option<Duration>) -> Self {
         self.lifespan = lifespan;
@@ -184,7 +183,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "lifespan")]
     fn exceed_lifespan() {
         let lifespan = Duration::from_millis(10);
         let mut pool = TaskPool::<(), EmptyProgress>::default().with_lifespan(Some(lifespan));
@@ -197,7 +195,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "lifespan")]
     fn within_lifespan() {
         let lifespan = Duration::from_millis(10);
         let mut pool = TaskPool::<(), EmptyProgress>::default().with_lifespan(Some(lifespan));
