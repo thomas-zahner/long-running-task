@@ -22,4 +22,4 @@ This crate helps to manage and keep track of long-running tasks.
 
 ## Get started
 
-Take a look at [the Rocket example](examples/rocket/src/main.rs) to learn how to design REST API endpoints for long-running tasks.
+Take a look at [the Rocket example](https://github.com/thomas-zahner/long-running-task/blob/master/examples/rocket/src/main.rs) to learn how to design REST API endpoints for long-running tasks.
