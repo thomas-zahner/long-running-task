@@ -17,7 +17,7 @@ This crate helps to manage and keep track of long-running tasks.
 ## Features
 
 - Manage and keep track of the progress of tasks and their results
-- Enable the `serde` feature to make tasks (de-)serialisable and use them in combination with a web-frameworks
+- Enable the `serde` feature to make tasks serialisable and use them in combination with a web-frameworks
 - Configure a lifespan to prevent completed tasks from living on indefinitely if they are not retrieved
 
 ## Get started
