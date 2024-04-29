@@ -3,6 +3,7 @@ name = "long-running-task"
 authors = ["Thomas Zahner <thomas.zahner@protonmail.ch>"]
 description = "Handle long-running tasks for your RESTful HTTP API"
 keywords = ["web", "rest", "restful", "http"]
+repository = "https://github.com/thomas-zahner/long-running-task"
 readme = "README.md"
 version = "0.1.0"
 edition = "2021"
